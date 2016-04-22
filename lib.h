@@ -10,15 +10,18 @@ typedef struct _nodeset{
     struct _nodeset *prev;
 } nodeset;
 
-node * init();
-nodeset * init_nodeset();
-node * push(node *current, int info);
-int pop(node *current);
-void print(node *head);
-nodeset * push_nodeset(nodeset *current);
-int pop_nodeset(nodeset *current);
-void print_nodesets(nodeset *head);
-nodeset * get_nodeset(nodeset *first, int index);
+node * initNode();
+node * insertNode(node *current, int info);
+int deleteNode(node *current);
+void printNode(node *head);
+nodeset * initNodeSet();
+nodeset * insertNodeSet(nodeset *current);
+int deleteNodeSet(nodeset *current);
+void printNodeSets(nodeset *first);
+nodeset * getNodeSet(nodeset *first, int index);
+
+
+
 void alloc_error();
 void invalid_option();
 void no_nodesets();

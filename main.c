@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "lib.h"
 
-int main () {
+int main() {
     // variáveis inteiras para controle dos menus
     int menu, submenu, option, info, test;
     // ponteiro para utilização durante a execução do programa
@@ -10,11 +10,11 @@ int main () {
     // ponteiro que armazena a posição do primeiro conjunto (first), do último (last), e ponteiro para utilização na execução do programa (current)
     nodeset *first, *last, *current;
 
-    first = last = init_nodeset();
+    first = last = initNodeSet();
 
     do {
-        currentnode = init();
-        current = init_nodeset();
+        currentnode = initNode();
+        current = initNodeSet();
         printf("Digite a opção desejada:\n1 - Adicionar Conjunto\n2 - Excluir Conjunto\n3 - Alterar Conjunto\n4 - Exibir Intersecção\n5 - Exibir União\n6 - Exibir Diferença\n7 - Visualizar Conjuntos\n0 - Sair\n");
         scanf("%d", &menu);
 
@@ -23,7 +23,7 @@ int main () {
                 // adiciona um novo conjunto
                 // se tiver sucesso na alocação, inicia o povoamento do novo conjunto
                 // caso contrário, exibe um erro padrão
-                current = push_nodeset(last);
+                current = insertNodeSet(last);
 
                 if (current != NULL) {
                     // se for alocado normalmente, o ponteiro do último recebe o ponteiro recém adicionado
@@ -36,7 +36,7 @@ int main () {
                     do {
                         printf("Digite um número a inserir no novo conjunto: ");
                         scanf("%d", &info);
-                        currentnode = push(currentnode, info);
+                        currentnode = insertNode(currentnode, info);
 
                         // caso tenha sucesso na alocação, verifica se o ponteiro do conjunto possui a cabeça do conjunto
                         // se não tiver, receberá o node recém adicionado
@@ -63,19 +63,19 @@ int main () {
             case 3:
                 // altera um conjunto existente no programa
                 printf("Escolha o conjunto que deseja alterar:\n");
-                print_nodesets(first);
+                printNodeSets(first);
                 printf("Digite o índice do conjunto: ");
                 test = scanf("%d", &option);
 
                 if (test == 1) {
-                    current = get_nodeset(first, option);
+                    current = getNodeSet(first, option);
                 } else {
-                    current = init_nodeset();
+                    current = initNodeSet();
                 }
 
                 if (current != NULL) {
                     printf("[%d] = ", option);
-                    print(current->head);
+                    printNode(current->head);
                     printf("Digite a opção desejada:\n1 - Inserir\n2 - Remover\n");
                     scanf("%d", &submenu);
                     // necessita de um submenu, pois a alteração pode ser de inserção ou remoção de um item do conjunto
@@ -101,8 +101,8 @@ int main () {
                 // diferença
             break;
             case 7:
-                // case de testes, imprime todos os conjuntos que existem no programa
-                print_nodesets(first);
+                // imprime todos os conjuntos que existem no programa
+                printNodeSets(first);
             break;
             case 0:
                 printf("Encerrando...");

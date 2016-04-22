@@ -3,6 +3,7 @@
 #include "lib.h"
 #include "mergesort.h"
 
+
 // Função que quebra uma lista em duas partes
 // Necessária para realizar a ordenação
 node * splitNode(node *head) {
@@ -26,6 +27,7 @@ node * splitNode(node *head) {
     // Retornamos "temp" que é ponteiro de início da "segunda lista"
     return temp;
 }
+
 
 // Função para juntar novamente a lista
 node * mergeNode(node *first, node *second) {
@@ -54,6 +56,7 @@ node * mergeNode(node *first, node *second) {
         return second;
     }
 }
+
 
 // Função que chama as demais para organizar uma lista
 // Isso se chama "Algoritmo de merge sort"
