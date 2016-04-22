@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "lib.h"
+#include "mergesort.h"
+
 
 int main() {
     // variáveis inteiras para controle dos menus
@@ -93,12 +95,21 @@ int main() {
             break;
             case 4:
                 // intersecção
+                currentnode = executeOp(first, 2);
+                printNode(currentnode);
+                deleteAllNodes(currentnode);
             break;
             case 5:
                 // união
+                currentnode = executeOp(first, 1);
+                printNode(currentnode);
+                deleteAllNodes(currentnode);
             break;
             case 6:
                 // diferença
+                currentnode = executeOp(first, 3);
+                printNode(currentnode);
+                deleteAllNodes(currentnode);
             break;
             case 7:
                 // imprime todos os conjuntos que existem no programa

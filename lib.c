@@ -40,6 +40,17 @@ int deleteNode(node *current) {
     return 1;
 };
 
+// retira todos os itens de um conjunto
+int deleteAllNodes(node *first) {
+    node *temp, *test = first;
+    do {
+        temp = test;
+        test = test->next;
+        free(temp);
+    } while (test != NULL);
+    return 1;
+};
+
 
 // imprime um conjunto
 void printNode(node *head) {
@@ -79,15 +90,10 @@ nodeset * insertNodeSet(nodeset *current) {
 
 // exclui um conjunto e todos os seus nodes
 int deleteNodeSet(nodeset *current) {
-    node *test, *temp;
-    test = current->head;
+    node *first = current->head;
 
     // libera todos os nodes da memória
-    do {
-        temp = test;
-        test = test->next;
-        free(temp);
-    } while (test != NULL);
+    deleteAllNodes(first);
 
     // reestrutura a lista de conjuntos
     if (current->prev != NULL) {
@@ -149,6 +155,100 @@ nodeset * getNodeSet(nodeset *first, int index) {
 }
 
 
+// função que executa as operações entre todos os conjuntos e retorna um conjunto resultado
+// op: 1 - União 2 - Intersecção 3 - Diferença
+node * executeOp(nodeset *head, int op) {
+    // ponteiro de retorno e pornteiros para uso dentro da função
+    node *result, *temp;
+    nodeset *first, *next;
+
+    result = temp = initNode();
+    first = next = initNodeSet();
+
+    // inicializamos o ponteiro da lista atual e da próxima e
+    // organizamos ambas com mergeSort
+    first = head;
+    next = head->next;
+
+    // realiza a união dos primeiros dois conjuntos
+
+    // organiza o primeiro conjunto com mergeSort
+    first->head = mergeSort(first->head);
+
+    // se houver um segundo conjunto (próximo), realiza a união entre ambos
+    // joga a união em result e atualiza o next para início do laço while abaixo
+    if (next != NULL) {
+        next->head = mergeSort(next->head);
+        switch (op) {
+            // união
+            case 1:
+                result = getUnion(first->head, next->head);
+            break;
+            // intersec
+            case 2:
+                result = getInt(first->head, next->head);
+            break;
+            // dif
+            case 3:
+                result = getDif(first->head, next->head);
+            break;
+            // se a op informada não for nenhuma das 3
+            default:
+                return result;
+        }
+        next = next->next;
+    } else {
+        // caso haja apenas um conjunto, o resultado será ele mesmo organizado e retirados os duplicados
+        switch (op) {
+            // união
+            case 1:
+                result = getUnion(first->head, NULL);
+            break;
+            // intersec
+            case 2:
+                result = getInt(first->head, NULL);
+            break;
+            // dif
+            case 3:
+                result = getDif(first->head, NULL);
+            break;
+            // se a op informada não for nenhuma das 3
+            default:
+                return result;
+        }
+    }
+
+    // enquanto houver mais elementos, organiza o next com mergeSort, une-o com o resultado anterior
+    // joga a união em temp, exclui o resultado anterior da memória, atualiza result com o resultado atual
+    // e atualiza next para o próximo conjunto
+    while (next) {
+        next->head = mergeSort(next->head);
+        switch (op) {
+            // união
+            case 1:
+                temp = getUnion(result, next->head);
+            break;
+            // intersec
+            case 2:
+                temp = getInt(result, next->head);
+            break;
+            // dif
+            case 3:
+                temp = getDif(result, next->head);
+            break;
+            // se a op informada não for nenhuma das 3
+            default:
+                return result;
+        }
+        deleteAllNodes(result);
+        result = temp;
+        next = next->next;
+    }
+
+    return result;
+}
+
+
 // função que retorna a união entre duas listas duplamente encadeadas
 // recebe duas cabeças de listas e retorna a cabeça de uma terceira lista que é a união das duas entradas
 node * getUnion(node *head1, node *head2) {
@@ -162,44 +262,6 @@ node * getUnion(node *head1, node *head2) {
 	node *head3, *lastNode, *prev1, *prev2;
 
 	head3 = lastNode = prev1 = prev2 = initNode();
-
-    // caso uma das listas de entrada for vazia
-    // então o resultado receberá a outra lista, mas sem itens repetidos
-    // a lista resultado será NULL somente se ambas estiverem vazias
-	if (node1 == NULL) {
-        // caso node1 seja NULL vamos percorerr node2
-		while (node2) {
-            // se prev2 for NULL significa que estamos no primeiro elemento de node2
-            // então basta adicionar o primeiro elemento e definir a cabeça da nova lista
-			if (prev2 == NULL) {
-				lastNode = insertNode(lastNode, node2->info);
-				head3 = lastNode;
-			} else {
-                // a partir do segundo elemento, verificamos se ele é diferente do que
-                // foi visitado anteriormente para ele não seja repetido
-				if (prev2->info != node2->info)
-                    lastNode = insertNode(lastNode, node2->info);
-			}
-			// atualizamos o anterior como o que acabamos de visitar e o próximo a ser visitado
-			prev2 = node2;
-			node2 = node2->next;
-		}
-	} else {
-        // igual o caso anterior, só que usando node1
-        if (node2 == NULL) {
-            while (node1) {
-                if (prev1 == NULL) {
-                    lastNode = insertNode(lastNode, node1->info);
-                    head3 = lastNode;
-                } else {
-                    if (prev1->info != node1->info)
-                        lastNode = insertNode(lastNode, node1->info);
-                }
-                prev1 = node1;
-                node1 = node1->next;
-            }
-        }
-	}
 
     // caso haja itens em ambas as listas dadas como entrada
     // percorre as duas listas até o fim da menor delas
@@ -223,7 +285,7 @@ node * getUnion(node *head1, node *head2) {
 		} else {
             // quando forem diferentes, o procedimento é o mesmo, a única diferença é que
             // como as listas estão organizadas com mergeSort, avançamos somente a lista mais "atrasada", ou seja, que tem o menor valor
-            if(node1->info < node2->info) {
+            if (node1->info < node2->info) {
                 if (prev1 == NULL) {
                     lastNode = insertNode(lastNode, node1->info);
                     head3 = lastNode;
@@ -240,13 +302,53 @@ node * getUnion(node *head1, node *head2) {
                     head3 = lastNode;
                 } else {
                     if (prev2->info != node2->info)
-                        lastNode = insertNode(lastNode, node1->info);
+                        lastNode = insertNode(lastNode, node2->info);
                 }
                 // como prev2 é menor que prev1, avançamos apenas prev2
                 prev2 = node2;
                 node2 = node2->next;
             }
 		}
+	}
+
+    // caso uma das listas de entrada tenha acabado de ser percorrida
+    // então o resultado receberá o restante da outra lista, mas sem itens repetidos
+	if (node1 == NULL) {
+        // caso node1 seja NULL vamos percorrer node2
+		while (node2) {
+            // se prev2 for NULL significa que estamos no primeiro elemento de node2
+            // então basta adicionar o elemento
+			if (prev2 == NULL) {
+				lastNode = insertNode(lastNode, node2->info);
+				// CASO UMA DAS LISTAS SEJA NULL NÃO HAVERÁ CABEÇA DO RESULTADO DEFINIDA
+				if (head3 == NULL)
+                    head3 = lastNode;
+			} else {
+                // a partir do segundo elemento, verificamos se ele é diferente do que
+                // foi visitado anteriormente para ele não seja repetido
+				if (prev2->info != node2->info)
+                    lastNode = insertNode(lastNode, node2->info);
+			}
+			// atualizamos o anterior como o que acabamos de visitar e o próximo a ser visitado
+			prev2 = node2;
+			node2 = node2->next;
+		}
+	} else {
+        // igual o caso anterior, só que usando node1
+        if (node2 == NULL) {
+            while (node1) {
+                if (prev1 == NULL) {
+                    lastNode = insertNode(lastNode, node1->info);
+                    if (head3 == NULL)
+                        head3 = lastNode;
+                } else {
+                    if (prev1->info != node1->info)
+                        lastNode = insertNode(lastNode, node1->info);
+                }
+                prev1 = node1;
+                node1 = node1->next;
+            }
+        }
 	}
 
 	return head3;
@@ -273,6 +375,47 @@ node * getInt(node *head1, node *head2) {
 	while(node1 && node2) {
         // se os dados forem iguais, adicionamos à intersecção
 		if(node1->info == node2->info) {
+            lastNode = insertNode(lastNode, node1->info);
+            // se a lista resultado estiver vazia, ela recebe o primeiro node adicionado
+            if (head3 == NULL)
+                head3 = lastNode;
+			node1 = node1->next;
+			node2 = node2->next;
+
+		} else {
+            // como as listas estão organizadas com mergeSort
+            // quando os valores forem diferentes, avançamos a lista mais "atrasada", ou seja, que tem o menor valor
+            if(node1->info < node2->info)
+                node1 = node1->next;
+            else
+                node2 = node2->next;
+        }
+	}
+
+	return head3;
+}
+
+
+// função que retorna a diferença de duas listas duplamente encadeadas
+// recebe duas cabeças de listas e retorna uma nova lista
+node * getDif(node *head1, node *head2) {
+    // node1 e node2 recebem as cabeças para serem tratadas na função
+	node *node1 = head1;
+	node *node2 = head2;
+	// head3 será a cabeça da nova lista gerada
+	// lastNode será o último node adicionado, para colocar um depois do outro
+	node *head3, *lastNode;
+
+	head3 = lastNode = initNode();
+
+    // caso uma das cabeças seja NULL não há como realizar diferença
+	if(head1 == NULL || head2 == NULL)
+		return NULL;
+
+    // percorremos as listas até o fim da menor delas
+	while(node1 && node2) {
+        // se os dados forem diferentes, adicionamos so resultado
+		if(node1->info != node2->info) {
             lastNode = insertNode(lastNode, node1->info);
             // se a lista resultado estiver vazia, ela recebe o primeiro node adicionado
             if (head3 == NULL)

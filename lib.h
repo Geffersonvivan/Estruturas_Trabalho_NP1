@@ -13,15 +13,17 @@ typedef struct _nodeset{
 node * initNode();
 node * insertNode(node *current, int info);
 int deleteNode(node *current);
+int deleteAllNodes(node *first);
 void printNode(node *head);
 nodeset * initNodeSet();
 nodeset * insertNodeSet(nodeset *current);
 int deleteNodeSet(nodeset *current);
 void printNodeSets(nodeset *first);
 nodeset * getNodeSet(nodeset *first, int index);
-
-
-
+node * getUnion(node *head1, node *head2);
+node * getInt(node *head1, node *head2);
+node * getDif(node *head1, node *head2);
+node * executeOp(nodeset *head, int op);
 void alloc_error();
 void invalid_option();
 void no_nodesets();
