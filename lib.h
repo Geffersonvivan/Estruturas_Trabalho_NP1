@@ -12,7 +12,9 @@ typedef struct _nodeset{
 
 node * initNode();
 node * insertNode(node *current, int info);
+node * getNodeByValue(node *first, int value);
 int deleteNode(node *current);
+int deleteNodesWithValue(node *current, int value);
 int deleteAllNodes(node *first);
 void printNode(node *head);
 nodeset * initNodeSet();
@@ -27,3 +29,4 @@ node * executeOp(nodeset *head, int op);
 void alloc_error();
 void invalid_option();
 void no_nodesets();
+void invalid_value();

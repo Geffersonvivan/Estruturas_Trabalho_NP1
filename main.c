@@ -9,10 +9,10 @@ int main() {
     int menu, submenu, option, info, test;
     // ponteiro para utilização durante a execução do programa
     node *currentnode;
-    // ponteiro que armazena a posição do primeiro conjunto (first), do último (last), e ponteiro para utilização na execução do programa (current)
-    nodeset *first, *last, *current;
+    // ponteiro que armazena a posição do primeiro conjunto (first) e ponteiro para utilização na execução do programa (current)
+    nodeset *first, *current;
 
-    first = last = initNodeSet();
+    first = initNodeSet();
 
     do {
         currentnode = initNode();
@@ -25,46 +25,43 @@ int main() {
                 // adiciona um novo conjunto
                 // se tiver sucesso na alocação, inicia o povoamento do novo conjunto
                 // caso contrário, exibe um erro padrão
-                current = insertNodeSet(last);
+                current = insertNodeSet(first);
 
                 if (current != NULL) {
                     // se for alocado normalmente, o ponteiro do último recebe o ponteiro recém adicionado
-                    last = current;
-                    // na primeira alocação, o ponteiro primeiro (first) e último (last) apontarão para o mesmo lugar
-                    if (first == NULL)
-                        first = last;
+                    first = current;
 
                     // solicita o povoamento do conjunto
                     do {
-                        printf("Digite um número a inserir no novo conjunto: ");
-                        scanf("%d", &info);
-                        currentnode = insertNode(currentnode, info);
+                        printf("Digite um número a inserir no novo conjunto [para sair, digite uma letra]: ");
+                        option = scanf("%d", &info);
+                        getchar();
 
-                        // caso tenha sucesso na alocação, verifica se o ponteiro do conjunto possui a cabeça do conjunto
-                        // se não tiver, receberá o node recém adicionado
-                        // caso a alocação não tenha sucesso, exibe um erro padrão
-                        if (currentnode != NULL) {
-                            if (current->head == NULL)
-                                current->head = currentnode;
-                        } else {
-                            alloc_error();
-                            break;
+                        if (option) {
+                            currentnode = insertNode(currentnode, info);
+                            // caso tenha sucesso na alocação, verifica se o ponteiro do conjunto possui a cabeça do conjunto
+                            // se não tiver, receberá o node recém adicionado
+                            // caso a alocação não tenha sucesso, exibe um erro padrão
+                            if (currentnode != NULL) {
+                                if (current->head == NULL)
+                                    current->head = currentnode;
+                            } else {
+                                alloc_error();
+                                break;
+                            }
                         }
-
-                        // vai aceitar outros valores além de 1 como "Sim", mas não prejudica o funcionamento do sistema
-                        printf("Deseja inserir outro número? 1 - Sim, 0 - Não\n");
-                        scanf("%d", &option);
                     } while (option);
                 } else {
                     alloc_error();
                 }
             break;
             case 2:
+                if (first == NULL) {
+                    printf("Não há conjuntos disponíveis.\n");
+                    break;
+                }
                 // excluir conjunto
-            break;
-            case 3:
-                // altera um conjunto existente no programa
-                printf("Escolha o conjunto que deseja alterar:\n");
+                printf("Escolha o conjunto que deseja excluir:\n");
                 printNodeSets(first);
                 printf("Digite o índice do conjunto: ");
                 test = scanf("%d", &option);
@@ -78,13 +75,84 @@ int main() {
                 if (current != NULL) {
                     printf("[%d] = ", option);
                     printNode(current->head);
-                    printf("Digite a opção desejada:\n1 - Inserir\n2 - Remover\n");
+                    printf("Você tem certeza que deseja excluir?: 1 - Sim, 0 - Não\n");
                     scanf("%d", &submenu);
+
+                    if (submenu) {
+                        deleteNodeSet(current);
+                        printf("Conjunto excluído com sucesso!\n");
+                    } else {
+                        printf("Operação cancelada!\n");
+                    }
+                } else {
+                    invalid_option();
+                }
+            break;
+            case 3:
+                if (first == NULL) {
+                    printf("Não há conjuntos disponíveis.\n");
+                    break;
+                }
+                // altera um conjunto existente no programa
+                printf("Escolha o conjunto que deseja alterar:\n");
+                printNodeSets(first);
+                printf("Digite o índice do conjunto: ");
+                test = scanf("%d", &option);
+
+                if (test == 1) {
+                    current = getNodeSet(first, option);
+                } else {
+                    current = initNodeSet();
+                }
+
+                if (current != NULL) {
+                    current->head = mergeSort(current->head);
+                    printf("[%d] = ", option);
+                    printNode(current->head);
+                    printf("Digite a opção desejada: 1 - Inserir, 2 - Remover\n");
+                    scanf("%d", &submenu);
+
                     // necessita de um submenu, pois a alteração pode ser de inserção ou remoção de um item do conjunto
                     switch (submenu) {
                         case 1:
+                            printf("Digite o valor do elemento onde deseja inserir o novo\n(se houver mais de um será inserido após o último encontrado):\n");
+                            test = scanf("%d", &info);
+
+                            if (test == 1) {
+                                currentnode = getNodeByValue(current->head, info);
+
+                                if (currentnode != NULL) {
+                                    printf("Digite o valor que deseja inserir:\n");
+                                    test = scanf("%d", &info);
+
+                                    if (test == 1) {
+                                        currentnode = insertNode(currentnode, info);
+
+                                        if (currentnode != NULL) {
+                                            printf("Valor inserido com sucesso!\n");
+                                        } else {
+                                            alloc_error();
+                                        }
+                                    } else {
+                                        invalid_value();
+                                    }
+                                } else {
+                                    invalid_value();
+                                }
+                            } else {
+                                invalid_value();
+                            }
                         break;
                         case 2:
+                            printf("Digite o valor que deseja remover:\n");
+                            test = scanf("%d", &info);
+
+                            if (test == 1) {
+                                deleteNodesWithValue(current->head, info);
+                                printf("Valor excluído com sucesso!\n");
+                            } else {
+                                invalid_value();
+                            }
                         break;
                         default:
                             invalid_option();
@@ -96,20 +164,32 @@ int main() {
             case 4:
                 // intersecção
                 currentnode = executeOp(first, 2);
-                printNode(currentnode);
-                deleteAllNodes(currentnode);
+                if (currentnode != NULL) {
+                    printNode(currentnode);
+                    deleteAllNodes(currentnode);
+                } else {
+                    printf("Não há intersecção!\n");
+                }
             break;
             case 5:
                 // união
                 currentnode = executeOp(first, 1);
-                printNode(currentnode);
-                deleteAllNodes(currentnode);
+                if (currentnode != NULL) {
+                    printNode(currentnode);
+                    deleteAllNodes(currentnode);
+                } else {
+                    printf("Não há união!\n");
+                }
             break;
             case 6:
                 // diferença
                 currentnode = executeOp(first, 3);
-                printNode(currentnode);
-                deleteAllNodes(currentnode);
+                if (currentnode != NULL) {
+                    printNode(currentnode);
+                    deleteAllNodes(currentnode);
+                } else {
+                    printf("Não há diferença!\n");
+                }
             break;
             case 7:
                 // imprime todos os conjuntos que existem no programa
