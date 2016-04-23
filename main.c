@@ -79,7 +79,7 @@ int main() {
                     scanf("%d", &submenu);
 
                     if (submenu) {
-                        deleteNodeSet(current);
+                        first = deleteNodeSet(current);
                         printf("Conjunto excluído com sucesso!\n");
                     } else {
                         printf("Operação cancelada!\n");
@@ -148,7 +148,7 @@ int main() {
                             test = scanf("%d", &info);
 
                             if (test == 1) {
-                                deleteNodesWithValue(current->head, info);
+                                current->head = deleteNodesWithValue(current->head, info);
                                 printf("Valor excluído com sucesso!\n");
                             } else {
                                 invalid_value();

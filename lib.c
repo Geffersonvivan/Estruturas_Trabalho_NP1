@@ -58,7 +58,7 @@ int deleteNode(node *current) {
 
 
 // retira itens com determinado valor de um conjunto
-int deleteNodesWithValue(node *first, int value) {
+node * deleteNodesWithValue(node *first, int value) {
     node *temp, *test = first;
     do {
         temp = test;
@@ -71,10 +71,14 @@ int deleteNodesWithValue(node *first, int value) {
             if (temp->next != NULL) {
                 temp->next->prev = temp->prev;
             }
+            // para que retorne sempre a cabeça, mesmo que ela seja excluída haverá outra
+            if (temp == first)
+                first = temp->next;
             free(temp);
         }
     } while (test != NULL);
-    return 1;
+
+    return first;
 };
 
 
@@ -128,7 +132,8 @@ nodeset * insertNodeSet(nodeset *current) {
 
 
 // exclui um conjunto e todos os seus nodes
-int deleteNodeSet(nodeset *current) {
+nodeset * deleteNodeSet(nodeset *current) {
+    nodeset *test;
     node *first = current->head;
 
     // libera todos os nodes da memória
@@ -142,9 +147,21 @@ int deleteNodeSet(nodeset *current) {
         current->next->prev = current->prev;
     }
 
+    // percorre até o primeiro elemento para retorná-lo
+    test = current;
+
+    while (test->prev != NULL) {
+        test = test->prev;
+    }
+
+    if (test == current)
+        test = initNodeSet();
+
     // libera da memória o conjunto atual
     free(current);
-    return 1;
+
+    // retorna o novo início
+    return test;
 };
 
 
@@ -439,99 +456,29 @@ node * getInt(node *head1, node *head2) {
 
 // função que retorna a diferença de duas listas duplamente encadeadas
 // recebe duas cabeças de listas e retorna uma nova lista
+// basicamente subtrai a intersecção da união
 node * getDif(node *head1, node *head2) {
-    // node1 e node2 recebem as cabeças para serem tratadas na função
-	node *node1 = head1;
-	node *node2 = head2;
-	// head3 será a cabeça da nova lista gerada
-	// lastNode será o último node adicionado, para que o próximo seja colocado depois dele
-	// prev1 e prev2 receberão os nodes visitados anteriormente
-	// a fim de que não haja itens repetidos no resultado
-	node *head3, *lastNode, *prev1, *prev2;
+	node *union_list, *intersection_list, *diff_list, *test;
 
-	head3 = lastNode = prev1 = prev2 = initNode();
+    // gera união e intersecção
+	union_list = getUnion(head1, head2);
+	intersection_list = getInt(head1, head2);
 
-    // caso haja itens em ambas as listas dadas como entrada
-    // percorre as duas listas até o fim da menor delas
-	while (node1 && node2) {
-        // se os valores de node1 e node2 forem iguais
-		if (node1->info == node2->info) {
-			// atualiza itens visitados anteriormente e próximos
-			prev1 = node1;
-			prev2 = node2;
-			node1 = node1->next;
-			node2 = node2->next;
-		} else {
-            // quando forem diferentes, adicionamos o item e avançamos somente a lista mais "atrasada", ou seja, que tem o menor valor
-            if (node1->info < node2->info) {
-                if (prev1 == NULL) {
-                    lastNode = insertNode(lastNode, node1->info);
-                    if (head3 == NULL)
-                        head3 = lastNode;
-                } else {
-                    if (prev1->info != node1->info)
-                        lastNode = insertNode(lastNode, node1->info);
-                }
-                // como prev1 é menor que prev2, avançamos apenas prev1
-                prev1 = node1;
-                node1 = node1->next;
-            } else {
-                if (prev2 == NULL) {
-                    lastNode = insertNode(lastNode, node2->info);
-                    if (head3 == NULL)
-                        head3 = lastNode;
-                } else {
-                    if (prev2->info != node2->info)
-                        lastNode = insertNode(lastNode, node2->info);
-                }
-                // como prev2 é menor que prev1, avançamos apenas prev2
-                prev2 = node2;
-                node2 = node2->next;
-            }
-		}
+    // o resultado recebe a união e uma variável de testes é instanciada para percorrer
+    // a lista de intersecção
+    diff_list = union_list;
+    test = intersection_list;
+
+    // cada item da lista de intersecção é retirado da lista resultado
+    while (test != NULL) {
+        diff_list = deleteNodesWithValue(diff_list, test->info);
+        test = test->next;
 	}
 
-    // caso uma das listas de entrada tenha acabado de ser percorrida
-    // então o resultado receberá o restante da outra lista, mas sem itens repetidos
-	if (node1 == NULL) {
-        // caso node1 seja NULL vamos percorrer node2
-		while (node2) {
-            // se prev2 for NULL significa que estamos no primeiro elemento de node2
-            // então basta adicionar o elemento
-			if (prev2 == NULL) {
-				lastNode = insertNode(lastNode, node2->info);
-				// CASO UMA DAS LISTAS SEJA NULL NÃO HAVERÁ CABEÇA DO RESULTADO DEFINIDA
-				if (head3 == NULL)
-                    head3 = lastNode;
-			} else {
-                // a partir do segundo elemento, verificamos se ele é diferente do que
-                // foi visitado anteriormente para ele não seja repetido
-				if (prev2->info != node2->info)
-                    lastNode = insertNode(lastNode, node2->info);
-			}
-			// atualizamos o anterior como o que acabamos de visitar e o próximo a ser visitado
-			prev2 = node2;
-			node2 = node2->next;
-		}
-	} else {
-        // igual o caso anterior, só que usando node1
-        if (node2 == NULL) {
-            while (node1) {
-                if (prev1 == NULL) {
-                    lastNode = insertNode(lastNode, node1->info);
-                    if (head3 == NULL)
-                        head3 = lastNode;
-                } else {
-                    if (prev1->info != node1->info)
-                        lastNode = insertNode(lastNode, node1->info);
-                }
-                prev1 = node1;
-                node1 = node1->next;
-            }
-        }
-	}
+    // limpamos da memória a lista de intersecção, pois não é mais necessária
+    deleteAllNodes(intersection_list);
 
-	return head3;
+	return diff_list;
 }
 
 
