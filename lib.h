@@ -10,6 +10,7 @@ typedef struct _nodeset{
     struct _nodeset *prev;
 } nodeset;
 
+node * mergeSort(node *head);
 node * initNode();
 node * insertNode(node *current, int info);
 node * getNodeByValue(node *first, int value);

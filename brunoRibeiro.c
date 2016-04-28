@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "lib.h"
-#include "mergesort.h"
+#include "lib.c"
 // Trabalho de avaliação da disciplina de Estrutura de Dados I
 // Grupo: Bruno Ribeiro e Gefferson Vivan
 
