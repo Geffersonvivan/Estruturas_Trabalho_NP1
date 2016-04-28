@@ -552,7 +552,8 @@ node * getDif(node *head1, node *head2) {
 	}
 
     // limpamos da memória a lista de intersecção, pois não é mais necessária
-    deleteAllNodes(intersection_list);
+    if (intersection_list != NULL)
+        deleteAllNodes(intersection_list);
 
 	return diff_list;
 }
