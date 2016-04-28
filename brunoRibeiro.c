@@ -2,7 +2,8 @@
 #include <stdio.h>
 #include "lib.h"
 #include "mergesort.h"
-
+// Trabalho de avaliação da disciplina de Estrutura de Dados I
+// Grupo: Bruno Ribeiro e Gefferson Vivan
 
 int main() {
     // variáveis inteiras para controle dos menus

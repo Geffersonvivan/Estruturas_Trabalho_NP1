@@ -2,7 +2,8 @@
 #include <stdlib.h>
 #include "lib.h"
 #include "mergesort.h"
-
+// Biblioteca auxiliar para ordenação de listas (mergesort)
+// Baseada no código disponível em http://ideone.com/LQqKlc de Bhavik Gujarati
 
 // Função que quebra uma lista em duas partes
 // Necessária para realizar a ordenação
