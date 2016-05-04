@@ -230,8 +230,9 @@ nodeset * deleteNodeSet(nodeset *current) {
         test = test->prev;
     }
 
-    if (test == current)
-        test = initNodeSet();
+    // se o item excluido for a cabeça, define-se nova cabeça
+    if (test == current && current->next != NULL)
+        test = current->next;
 
     // libera da memória o conjunto atual
     free(current);
