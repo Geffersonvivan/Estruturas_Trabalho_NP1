@@ -183,7 +183,7 @@ int main() {
             break;
             case 6:
                 // diferença
-                currentnode = executeOp(first, 3);
+                currentnode = getDif(first);
                 if (currentnode != NULL) {
                     printNode(currentnode);
                     deleteAllNodes(currentnode);

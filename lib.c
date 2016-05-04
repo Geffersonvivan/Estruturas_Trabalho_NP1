@@ -287,7 +287,7 @@ nodeset * getNodeSet(nodeset *first, int index) {
 
 
 // função que executa as operações entre todos os conjuntos e retorna um conjunto resultado
-// op: 1 - União 2 - Intersecção 3 - Diferença
+// op: 1 - União 2 - Intersecção
 node * executeOp(nodeset *head, int op) {
     // ponteiro de retorno e pornteiros para uso dentro da função
     node *result, *temp;
@@ -319,11 +319,7 @@ node * executeOp(nodeset *head, int op) {
             case 2:
                 result = getInt(first->head, next->head);
             break;
-            // dif
-            case 3:
-                result = getDif(first->head, next->head);
-            break;
-            // se a op informada não for nenhuma das 3
+            // se a op informada não for nenhuma das 2
             default:
                 return result;
         }
@@ -339,11 +335,7 @@ node * executeOp(nodeset *head, int op) {
             case 2:
                 result = getInt(first->head, NULL);
             break;
-            // dif
-            case 3:
-                result = getDif(first->head, NULL);
-            break;
-            // se a op informada não for nenhuma das 3
+            // se a op informada não for nenhuma das 2
             default:
                 return result;
         }
@@ -363,11 +355,7 @@ node * executeOp(nodeset *head, int op) {
             case 2:
                 temp = getInt(result, next->head);
             break;
-            // dif
-            case 3:
-                temp = getDif(result, next->head);
-            break;
-            // se a op informada não for nenhuma das 3
+            // se a op informada não for nenhuma das 2
             default:
                 return result;
         }
@@ -530,15 +518,15 @@ node * getInt(node *head1, node *head2) {
 }
 
 
-// função que retorna a diferença de duas listas duplamente encadeadas
-// recebe duas cabeças de listas e retorna uma nova lista
+// função que retorna a diferença de todas as listas
+// e retorna uma nova lista
 // basicamente subtrai a intersecção da união
-node * getDif(node *head1, node *head2) {
+node * getDif(nodeset *head) {
 	node *union_list, *intersection_list, *diff_list, *test;
 
     // gera união e intersecção
-	union_list = getUnion(head1, head2);
-	intersection_list = getInt(head1, head2);
+	union_list = executeOp(head, 1);
+	intersection_list = executeOp(head, 2);
 
     // o resultado recebe a união e uma variável de testes é instanciada para percorrer
     // a lista de intersecção

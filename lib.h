@@ -25,7 +25,7 @@ void printNodeSets(nodeset *first);
 nodeset * getNodeSet(nodeset *first, int index);
 node * getUnion(node *head1, node *head2);
 node * getInt(node *head1, node *head2);
-node * getDif(node *head1, node *head2);
+node * getDif(nodeset *head);
 node * executeOp(nodeset *head, int op);
 void alloc_error();
 void invalid_option();
