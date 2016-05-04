@@ -104,14 +104,14 @@ node * insertNode(node *current, int info) {
 };
 
 
-// retira itens com determinado valor de um conjunto
+// obtem item com determinado valor de um conjunto
 node * getNodeByValue(node *first, int value) {
     node *temp, *test = first;
     do {
         temp = test;
         test = test->next;
 
-        if (temp->info == value && test != NULL && test->info != value) {
+        if (temp->info == value) {
             return temp;
         }
     } while (test != NULL);
@@ -263,17 +263,17 @@ void printNodeSets(nodeset *first) {
 // retorna um conjunto pelo índice informado
 nodeset * getNodeSet(nodeset *first, int index) {
     int i;
-    nodeset *temp;
+    nodeset *temp = first;
 
     // ponteiro inicial não pode ser NULL e o índice tem que ser maior ou igual a zero
-    if ((first == NULL) || (temp < 0) || (index < 0))
+    if ((first == NULL) || (index < 0))
         return NULL;
 
     if (index == 0)
         return first;
 
     for (i = 1; i <= index; i++) {
-        if (temp != NULL && temp->next != NULL) {
+        if (temp != NULL) {
             temp = temp->next;
         }
     }

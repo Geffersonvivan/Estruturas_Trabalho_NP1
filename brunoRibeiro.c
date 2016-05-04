@@ -107,7 +107,6 @@ int main() {
                 }
 
                 if (current != NULL) {
-                    current->head = mergeSort(current->head);
                     printf("[%d] = ", option);
                     printNode(current->head);
                     printf("Digite a opção desejada: 1 - Inserir, 2 - Remover\n");
@@ -116,7 +115,7 @@ int main() {
                     // necessita de um submenu, pois a alteração pode ser de inserção ou remoção de um item do conjunto
                     switch (submenu) {
                         case 1:
-                            printf("Digite o valor do elemento onde deseja inserir o novo\n(se houver mais de um será inserido após o último encontrado):\n");
+                            printf("Digite o valor do elemento onde deseja inserir o novo\n(se houver mais de um será inserido após o primeiro encontrado):\n");
                             test = scanf("%d", &info);
 
                             if (test == 1) {
