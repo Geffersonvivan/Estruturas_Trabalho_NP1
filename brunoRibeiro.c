@@ -162,6 +162,10 @@ int main() {
                 }
             break;
             case 4:
+                if (first == NULL) {
+                    printf("Não há conjuntos disponíveis.\n");
+                    break;
+                }
                 // intersecção
                 currentnode = executeOp(first, 2);
                 if (currentnode != NULL) {
@@ -172,6 +176,10 @@ int main() {
                 }
             break;
             case 5:
+                if (first == NULL) {
+                    printf("Não há conjuntos disponíveis.\n");
+                    break;
+                }
                 // união
                 currentnode = executeOp(first, 1);
                 if (currentnode != NULL) {
@@ -182,6 +190,10 @@ int main() {
                 }
             break;
             case 6:
+                if (first == NULL) {
+                    printf("Não há conjuntos disponíveis.\n");
+                    break;
+                }
                 // diferença
                 currentnode = getDif(first);
                 if (currentnode != NULL) {

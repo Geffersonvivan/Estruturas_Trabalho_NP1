@@ -174,10 +174,10 @@ int deleteAllNodes(node *first) {
 void printNode(node *head) {
     node *test;
     test = head;
-    do {
+    while (test != NULL) {
         printf("%d | ", test->info);
         test = test->next;
-    } while (test != NULL);
+    }
     printf("\n");
 };
 
