@@ -115,13 +115,17 @@ int main() {
                     // necessita de um submenu, pois a alteração pode ser de inserção ou remoção de um item do conjunto
                     switch (submenu) {
                         case 1:
-                            printf("Digite o valor do elemento onde deseja inserir o novo\n(se houver mais de um será inserido após o primeiro encontrado):\n");
-                            test = scanf("%d", &info);
+                            if (current->head != NULL) {
+                                printf("Digite o valor do elemento onde deseja inserir o novo\n(se houver mais de um será inserido após o primeiro encontrado):\n");
+                                test = scanf("%d", &info);
+                            } else {
+                                test = 2;
+                            }
 
-                            if (test == 1) {
+                            if (test != 0) {
                                 currentnode = getNodeByValue(current->head, info);
 
-                                if (currentnode != NULL) {
+                                if (currentnode != NULL || test == 2) {
                                     printf("Digite o valor que deseja inserir:\n");
                                     test = scanf("%d", &info);
 
@@ -129,6 +133,8 @@ int main() {
                                         currentnode = insertNode(currentnode, info);
 
                                         if (currentnode != NULL) {
+                                            if (current->head == NULL)
+                                                current->head = currentnode;
                                             printf("Valor inserido com sucesso!\n");
                                         } else {
                                             alloc_error();
